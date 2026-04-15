@@ -1,5 +1,7 @@
 from fastapi import FastAPI, Header, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from pathlib import Path
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, Column, Integer, String, Boolean, DateTime, func, text
 from sqlalchemy.orm import DeclarativeBase
@@ -7,6 +9,8 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 from app.db.database import get_db, engine
+
+STATIC_DIR = Path("/app/static")
 
 API_KEY = "sgai-secret-key-2026"
 
@@ -72,6 +76,20 @@ async def register_asset(payload: AssetIn, db: AsyncSession = Depends(get_db), k
 async def list_assets(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Asset))
     return result.scalars().all()
+
+@app.get("/download/agent")
+async def download_agent():
+    exe_path = STATIC_DIR / "SGAI-Agente.exe"
+    if not exe_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="Agente no disponible. Coloca 'SGAI-Agente.exe' en backend/static/ y reinicia."
+        )
+    return FileResponse(
+        path=str(exe_path),
+        filename="SGAI-Agente.exe",
+        media_type="application/octet-stream"
+    )
 
 @app.get("/health")
 async def health(): return {"status": "ok"}

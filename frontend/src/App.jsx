@@ -49,10 +49,31 @@ export default function App() {
 
   return (
     <div style={{fontFamily:'sans-serif',padding:'2rem',maxWidth:'1280px',margin:'0 auto'}}>
-      <h1 style={{borderBottom:'2px solid #333',paddingBottom:'0.5rem'}}>
-        SGAI — Gestión de Activos v2
-      </h1>
-      {loading ? <p>Cargando...</p> : (
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',borderBottom:'2px solid #333',paddingBottom:'0.5rem',marginBottom:'1.25rem'}}>
+        <h1 style={{margin:0}}>SGAI — Gestión de Activos v2</h1>
+        <a
+          href="/download/agent"
+          download="SGAI-Agente.exe"
+          style={{
+            display:'inline-flex', alignItems:'center', gap:'8px',
+            padding:'10px 20px', borderRadius:'8px', textDecoration:'none',
+            background:'#1d4ed8', color:'#fff', fontWeight:700, fontSize:'0.95em',
+            boxShadow:'0 2px 6px rgba(29,78,216,0.35)',
+            transition:'background 0.15s',
+          }}
+          onMouseOver={e => e.currentTarget.style.background='#1e40af'}
+          onMouseOut={e => e.currentTarget.style.background='#1d4ed8'}
+          title="Descarga el agente SGAI y ejecútalo en el equipo Windows que desees registrar"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Descargar Agente (.EXE)
+        </a>
+      </div>
+      {loading ? <p style={{color:'#666'}}>Cargando...</p> : (
         <table style={{width:'100%',borderCollapse:'collapse'}}>
           <thead>
             <tr style={{background:'#222',color:'#fff'}}>

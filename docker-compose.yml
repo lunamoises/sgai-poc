@@ -20,6 +20,8 @@ services:
     restart: unless-stopped
     environment:
       DATABASE_URL: postgresql+asyncpg://sgai:sgai_secret@postgres:5432/sgai
+    volumes:
+      - ./backend/static:/app/static
     networks: [backend_bridge]
     depends_on:
       postgres:
