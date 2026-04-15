@@ -1,0 +1,11 @@
+{
+  "version": 3,
+  "name": "SGAI Gateway",
+  "port": 8080,
+  "timeout": "3000ms",
+  "endpoints": [
+    {"endpoint":"/api/v1/activos","method":"GET","backend":[{"url_pattern":"/api/v1/activos","host":["http://backend:8000"]}]},
+    {"endpoint":"/api/v1/activos/{id}","method":"GET","backend":[{"url_pattern":"/api/v1/activos/{id}","host":["http://backend:8000"]}]},
+    {"endpoint":"/api/v1/activos","method":"POST","backend":[{"url_pattern":"/api/v1/activos","host":["http://backend:8000"]}]}
+  ]
+}
