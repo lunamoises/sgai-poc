@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Header, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, Column, Integer, String, DateTime, func
+from sqlalchemy import select, Column, Integer, String, Boolean, DateTime, func, text
 from sqlalchemy.orm import DeclarativeBase
 from pydantic import BaseModel
 from typing import Optional
@@ -23,6 +23,8 @@ class Asset(Base):
     modelo_cpu     = Column(String(200))
     ram_total      = Column(String(50))
     disco_libre    = Column(String(50))
+    so_operativo   = Column(String(100))
+    vulnerabilidad = Column(Boolean, default=False)
     ultimo_reporte = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
 class AssetIn(BaseModel):
@@ -31,11 +33,20 @@ class AssetIn(BaseModel):
     modelo_cpu: Optional[str] = None
     ram_total: Optional[str] = None
     disco_libre: Optional[str] = None
+    so_operativo: Optional[str] = None
+    vulnerabilidad: Optional[bool] = False
 
 @app.on_event("startup")
 async def startup():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        # Migraciones no destructivas: añade columnas nuevas si no existen
+        await conn.execute(text(
+            "ALTER TABLE assets ADD COLUMN IF NOT EXISTS so_operativo VARCHAR(100);"
+        ))
+        await conn.execute(text(
+            "ALTER TABLE assets ADD COLUMN IF NOT EXISTS vulnerabilidad BOOLEAN DEFAULT FALSE;"
+        ))
 
 def verify_key(x_api_key: str = Header(...)):
     if x_api_key != API_KEY:
