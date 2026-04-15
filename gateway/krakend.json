@@ -1,26 +1,25 @@
 {
   "version": 3,
-  "name": "SGAI Gateway",
+  "name": "SGAI Gateway v2",
   "port": 8080,
-  "timeout": "3000ms",
+  "timeout": "5000ms",
   "endpoints": [
     {
-      "endpoint": "/api/v1/activos",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "backend": [{"url_pattern": "/api/v1/activos", "host": ["http://backend:8000"], "encoding": "no-op"}]
-    },
-    {
-      "endpoint": "/api/v1/activos/{id}",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "backend": [{"url_pattern": "/api/v1/activos/{id}", "host": ["http://backend:8000"], "encoding": "no-op"}]
-    },
-    {
-      "endpoint": "/api/v1/activos",
+      "endpoint": "/v1/register",
       "method": "POST",
       "output_encoding": "no-op",
-      "backend": [{"url_pattern": "/api/v1/activos", "host": ["http://backend:8000"], "encoding": "no-op"}]
+      "input_headers": ["Content-Type", "X-API-KEY"],
+      "backend": [{
+        "url_pattern": "/v1/assets/register",
+        "host": ["http://backend:8000"],
+        "encoding": "no-op"
+      }]
+    },
+    {
+      "endpoint": "/v1/assets",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [{"url_pattern": "/v1/assets", "host": ["http://backend:8000"], "encoding": "no-op"}]
     }
   ]
 }

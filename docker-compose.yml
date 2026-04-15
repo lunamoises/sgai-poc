@@ -1,7 +1,6 @@
-version: "3.9"
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:15-alpine
     restart: unless-stopped
     environment:
       POSTGRES_DB: sgai
@@ -10,7 +9,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    ports: ["5432:5432"]
+    networks: [backend_bridge]
     healthcheck:
       test: ["CMD-SHELL","pg_isready -U sgai"]
       interval: 5s
@@ -21,7 +20,7 @@ services:
     restart: unless-stopped
     environment:
       DATABASE_URL: postgresql+asyncpg://sgai:sgai_secret@postgres:5432/sgai
-    ports: ["8000:8000"]
+    networks: [backend_bridge]
     depends_on:
       postgres:
         condition: service_healthy
@@ -30,13 +29,21 @@ services:
     image: devopsfaith/krakend:2.6
     volumes:
       - ./gateway/krakend.json:/etc/krakend/krakend.json:ro
-    ports: ["8080:8080"]
+    ports: ["80:8080"]
+    networks: [backend_bridge]
     depends_on: [backend]
 
   frontend:
     build: ./frontend
+    restart: unless-stopped
     ports: ["3000:3000"]
+    networks: [backend_bridge]
     depends_on: [gateway]
+
+networks:
+  backend_bridge:
+    driver: bridge
 
 volumes:
   pgdata:
+
